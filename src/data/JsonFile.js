@@ -3,10 +3,6 @@ const fs = require('fs');
 
 module.exports = class JsonFile {
 
-  static hallo() {
-    console.log('k');
-  }
-
   constructor(file) {
     this._file = file;
     this._data = null;
@@ -33,7 +29,11 @@ module.exports = class JsonFile {
 
   }
 
-  load() {
+  load(flush = false) {
+    if (flush) {
+      delete require.cache[require.resolve(this._file)];
+    }
+    this._data = require(this._file);
     return this;
   }
 

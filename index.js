@@ -11,4 +11,3 @@ class TZFrame {
 
 module.exports.register(TZFrame);
 
-const JsonFile = module.exports.use('tzframe/data/JsonFile');

@@ -1,10 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 
+const JsonFile = require('../data/JsonFile');
+
 module.exports = class ConfigManager {
 
   constructor(core) {
     this._core = core;
+
+    this._configs = {};
   }
 
   boot() {
@@ -14,6 +18,7 @@ module.exports = class ConfigManager {
 
   doBoot(resolve) {
     new Promise(this.checkPath.bind(this))
+      .then(this.listFiles.bind(this))
       .then(this.loadFiles.bind(this))
       .then(resolve);
   }
@@ -22,11 +27,24 @@ module.exports = class ConfigManager {
     fs.exists(this._path, resolve);
   }
 
-  loadFiles(exist) {
+  listFiles(exist) {
     if (exist) {
-      console.log('jo');
+      return new Promise((resolve, reject) => {
+        fs.readdir(this._path, (err, files) => {
+          if (err) return reject(err);
+          resolve(files);
+        });
+      });
     } else {
-      console.log('no');
+      return [];
+    }
+  }
+
+  loadFiles(files) {
+    for (const file in files) {
+      const key = path.basename(files[file]);
+      this._configs[] = new JsonFile(path.resolve(this._path, files[file]));
+      console.log(this._configs);
     }
   }
 
